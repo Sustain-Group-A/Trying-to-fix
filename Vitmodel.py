@@ -90,7 +90,9 @@ def load_and_preprocess_data(csv_path):
     X = df[feature_cols].values  # Shape: (n_samples, 256)
     #y = df['grain_type'].values  # Shape: (n_samples,)
     #dflabel = df['grain_type'].apply(lambda x:Path(x).stem.split("-")[0])
-    dflabel1 = df['grain_type'].str.extract(r"([^/]+)(?=-\d+\.hdr$)", expand=False).unique()
+    dflabel1 = df['grain_type'].str.extract(r"([^/]+)(?=-\d+\.hdr$)", expand=False)
+    print(X.shape)
+    print(dflabel1.shape)
 
     # Encode labels
     label_encoder = LabelEncoder()
@@ -103,10 +105,10 @@ def load_and_preprocess_data(csv_path):
     #print(X_scaled)
 
     # Split data: 80% train, 10% validation, 10% test
-    X_train, X_temp, y_train, y_temp = train_test_split(X_scaled, y_encoded, test_size=0.2, random_state=42, stratify=y_encoded)
+    X_train, X_temp, y_train, y_temp = train_test_split(X_scaled, y_encoded, test_size=0.2, random_state=42)
     print(X_train)
     print(X_temp)
-    X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=0.5, random_state=42, stratify=y_temp)
+    X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=0.5, random_state=42)
     
     return X_train, X_val, X_test, y_train, y_val, y_test, label_encoder
 
