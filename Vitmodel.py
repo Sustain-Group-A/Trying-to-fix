@@ -6,8 +6,19 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import Dataset, DataLoader
-from pathlib import Path
+import tensorflow as tf
+from tensorflow.keras import datasets, layers, models
+import matplotlib.pyplot as plt
 
+
+class cnn():
+    model = models.Sequential()
+    model.add(layers.Conv2D(32, (3,3), activation='relu', input_shape=(5731,90)))
+    model.add(layers.MaxPooling2D((2,2)))
+    model.add(layers.Conv2D(64, (2,2), activation='relu'))
+    model.add(layers.MaxPooling2D((2,2)))
+    model.add(layers.Conv2D(64, (3,3), activation='relu'))
+    
 # Custom Dataset for HSI data
 class HSIDataset(Dataset):
     def __init__(self, features, labels):
