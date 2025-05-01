@@ -28,35 +28,53 @@ X1 = feature_cols1.values
     #y = df['grain_type'].values  # Shape: (n_samples,)
     #dflabel = df['grain_type'].apply(lambda x:Path(x).stem.split("-")[0])
 dflabel1 = df['grain_type'].str.extract(r"([^/]+)(?=-\d+\.hdr$)", expand=False)
-print(X.shape)
+print(X1.shape)
 print(dflabel1.shape)
 
     # Encode labels
 label_encoder = LabelEncoder()
 y_encoded = label_encoder.fit_transform(dflabel1)
 print(len(y_encoded))
-predicted = label_encoder.fit_transform(predicted)
-true = label_encoder.fit_transform(true)
+#predicted = label_encoder.fit_transform(predicted)
+#true = label_encoder.fit_transform(true)
     
     # Normalize features
 scaler = StandardScaler()
 X_scaled = scaler.fit_transform(X1)
     #print(X_scaled)
+X_scaled = X_scaled.reshape(5731,259,1)
 
     # Split data: 80% train, 10% validation, 10% test
 X_train, X_test, y_train, y_test = train_test_split(X_scaled, y_encoded, test_size=0.2, random_state=42)
+#X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=0.5, random_state=42)
 
 
 model = models.Sequential()
-model.add(layers.Conv2D(32, (3,3), activation='relu', input_shape=(5731,90,1)))
-model.add(layers.MaxPooling2D((2,2)))
-model.add(layers.Conv2D(64, (2,2), activation='relu'))
-model.add(layers.MaxPooling2D((2,2)))
-model.add(layers.Conv2D(64, (3,3), activation='relu'))
+model.add(layers.Conv1D(90, 3 , activation='relu', input_shape=(259,1)))
+model.add(layers.Conv1D(90, 3 , activation='relu'))
+model.add(layers.Dropout(0.5))
+model.add(layers.MaxPooling1D((2)))
+model.add(layers.Flatten())
+model.add(layers.Dense(90, activation='relu'))
+model.add(layers.Dense(90, activation='softmax'))
 
-#model.compile(optimizer='adam', loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True), metrics=['accuracy'])
-#histroy = model.fit(X_train, y_train, epochs=10, validation_data=(X_test, y_test))
+model.compile(optimizer='adam', loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True), metrics=['accuracy'])
+model.fit(X_train, y_train, epochs=100,batch_size=90, validation_data=(X_test, y_test))
 
+pred = model.predict(X_test)
+
+_, results = model.evaluate = (X_test, y_test)
+print(results)
+
+fig3 = plt.figure()
+plt.title("CNN Confustion Matrix")
+plt.xlabel("Actual Values")
+plt.ylabel("Predicted Values")
+matrix = metrics.confusion_matrix(y_test, results)
+sns.heatmap(matrix, annot=True)
+plt.show()
+
+"""
 clf = SVC(gamma=0.001, C=10000, kernel='rbf')
 clf.fit(X_train, y_train)
 
@@ -88,3 +106,4 @@ plt.ylabel("Predicted Values")
 matrix = metrics.confusion_matrix(y_test, pred)
 sns.heatmap(matrix, annot=True)
 plt.show()
+"""
