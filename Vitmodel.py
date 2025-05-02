@@ -6,19 +6,8 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import Dataset, DataLoader
-import tensorflow as tf
-from tensorflow.keras import datasets, layers, models
 import matplotlib.pyplot as plt
 
-
-class cnn():
-    model = models.Sequential()
-    model.add(layers.Conv2D(32, (3,3), activation='relu', input_shape=(5731,90)))
-    model.add(layers.MaxPooling2D((2,2)))
-    model.add(layers.Conv2D(64, (2,2), activation='relu'))
-    model.add(layers.MaxPooling2D((2,2)))
-    model.add(layers.Conv2D(64, (3,3), activation='relu'))
-    
 # Custom Dataset for HSI data
 class HSIDataset(Dataset):
     def __init__(self, features, labels):
@@ -117,8 +106,6 @@ def load_and_preprocess_data(csv_path):
 
     # Split data: 80% train, 10% validation, 10% test
     X_train, X_temp, y_train, y_temp = train_test_split(X_scaled, y_encoded, test_size=0.2, random_state=42)
-    print(X_train)
-    print(X_temp)
     X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=0.5, random_state=42)
     
     return X_train, X_val, X_test, y_train, y_val, y_test, label_encoder
